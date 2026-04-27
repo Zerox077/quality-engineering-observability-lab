@@ -1,25 +1,42 @@
-const client = require('prom-client');
+const client = require("prom-client");
 
-const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics();
+// Collect default system metrics (CPU, memory, etc.)
+client.collectDefaultMetrics();
 
-// Request Counter
+// -----------------------------
+// HTTP REQUEST COUNTER
+// -----------------------------
 const httpRequestCounter = new client.Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'route', 'status']
+  name: "http_requests_total",
+  help: "Total number of HTTP requests",
+  labelNames: ["method", "route", "status"],
 });
 
-// Request Duration (latency)
+// -----------------------------
+// LATENCY HISTOGRAM
+// -----------------------------
 const httpRequestDuration = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'status'],
-  buckets: [0.1, 0.5, 1, 2, 5]
+  name: "http_request_duration_seconds",
+  help: "Duration of HTTP requests in seconds",
+  labelNames: ["method", "route", "status"],
+  buckets: [0.1, 0.5, 1, 2, 5],
 });
 
+// -----------------------------
+// SECURITY EVENTS (NEW)
+// -----------------------------
+const securityEvents = new client.Counter({
+  name: "security_events_total",
+  help: "Number of simulated security events",
+  labelNames: ["type"],
+});
+
+// -----------------------------
+// EXPORTS
+// -----------------------------
 module.exports = {
   httpRequestCounter,
   httpRequestDuration,
-  register: client.register
+  securityEvents,
+  register: client.register,
 };
